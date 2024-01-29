@@ -19,7 +19,6 @@ h1, h2, h3, h4, h5, h6 {
 /* Index.js CSS */
 .Website-Header {
     font-size: 25px;
-    font-style: italic;
     display: flex;
     align-items: center;
     padding: 20px 0px 0px 20px;
@@ -207,3 +206,11 @@ h1, h2, h3, h4, h5, h6 {
     align-items: baseline;
     gap: var(--size-spacing-small);
 }
+
+svg.icon {
+    display: inline;
+    height: 1.5em;
+    width: 1.5em;
+    vertical-align: top;
+    fill: currentColor;
+  }
