@@ -1,42 +1,51 @@
-#Main{
-    background-image: url("/images/food-background.jpg");
-    background-size: cover;
-    background-repeat: no-repeat;
-    height: 100vh;
-}
-
 body {
-    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-family: 'Ubuntu', sans-serif, 'Times New Roman', Times, serif;
+    ;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    font-family: Kanit, "Trebuchet MS", Calibri,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Merriweather', serif, Calibri,
         Roboto, "Segoe UI",
         Ubuntu, sans-serif;
     ;
 }
 
+.Page-Content {
+    padding: 50px;
+}
+
 /* Index.js CSS */
 .Website-Header {
-    font-size: 25px;
+    font-size: 19px;
     display: flex;
     align-items: center;
-    padding: 20px 0px 0px 20px;
+    padding: 10px 0px 10px 50px;
+    color: var(--color-text-heading);
+    border-bottom: 2px solid var(--color-text-heading);
+    gap: 0.5rem;
 }
 
 .Cuisine-Selection {
-    padding-top: 8%;
+    padding-top: 5%;
     text-align: center;
 }
 
 .Cuisine-Selection h2 {
     font-size: 30px;
+    margin-bottom: var(--size-spacing-large);
+    color: var(--color-text-heading);
 }
 
 .Cuisine-Selection ul {
     list-style: none;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
+    justify-items: center;
     padding: 0;
 }
 
@@ -46,29 +55,58 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .Cuisine-Selection ul li a {
-    color: black;
-    text-decoration:none;
-    background-color: rgb(255, 255, 255);
-    border-radius: 10px;
+    color: var(--color-text);
+    text-decoration: none;
+    background-color: var(--color-background);
+    border-radius: 50px;
     padding: 20px;
+    display: flex;
+    min-width: 125px;
+    justify-content: center;
 }
 
 .Cuisine-Selection ul li a:hover {
-    background-color: #bbbbbb;
+    background-color: #d2855f;
 }
 
+.food-container {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+}
+
+.food {
+    display: flex;
+    justify-content: baseline;
+    animation: scroll 10s linear infinite; /* Double the duration to match the duplication */
+}
+
+.food img {
+    margin-right: 5rem;
+}
+
+@keyframes scroll {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
 /* Indian.js CSS */
-#Indian {
-    padding:50px;
+
+.Meal-Options {
+    padding: 50px;
 }
 
 .Indian-Header h1 {
     font-size: var(--size-spacing-large);
-    color:var(--color-text-heading);
+    color: var(--color-text-heading);
 }
 
 .Indian-Header b {
-    color:var(--color-text-heading);
+    color: var(--color-text-heading);
 }
 
 .Search-Bar {
@@ -85,7 +123,7 @@ h1, h2, h3, h4, h5, h6 {
 
 
 .Selection-Title {
-    color:var(--color-text-heading);
+    color: var(--color-text-heading);
     margin-top: var(--size-spacing-medium);
 }
 
@@ -103,7 +141,7 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: space-between;
 }
 
-.Meal-Selection ul li{
+.Meal-Selection ul li {
     border: 2px solid var(--color-border);
     border-radius: 10px;
     padding: 15px;
@@ -119,7 +157,7 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     gap: var(--size-spacing-medium);
     color: var(--color-text);
-    text-decoration:none;
+    text-decoration: none;
     font-weight: bold;
 }
 
@@ -128,13 +166,13 @@ h1, h2, h3, h4, h5, h6 {
     padding: 50px;
 }
 
-.Meal header h1 {
+.Page-Content header h1 {
     color: var(--color-text-heading);
-    font-size: var(--size-spacing-extralarge);
+    font-size: var(--size-spacing-large);
 }
 
-.Meal header p {
-    color: var(--color-text-heading); 
+.Page-Content header p {
+    color: var(--color-text-heading);
 }
 
 .Intro {
@@ -180,13 +218,16 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 1.5rem;
 }
 
-.Utensiles, .Ingredients{
+.Utensiles,
+.Ingredients {
     display: flex;
     flex-direction: column;
     gap: var(--size-spacing-small);
 }
 
-.Utensiles ul li, .Ingredients ul li, .Steps ol li {
+.Utensiles ul li,
+.Ingredients ul li,
+.Steps ol li {
     margin-bottom: var(--size-spacing-small);
 }
 
@@ -213,4 +254,4 @@ svg.icon {
     width: 1.5em;
     vertical-align: top;
     fill: currentColor;
-  }
+}
