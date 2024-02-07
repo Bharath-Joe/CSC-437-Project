@@ -10,15 +10,15 @@
             href="https://fonts.googleapis.com/css2?family=Merriweather&family=Ubuntu&display=swap"
             rel="stylesheet"
         />
+        <script type="module" src="drop-down.ts"></script>
+        <script type="module" src="toggle-switch.ts"></script>
+        <script type="module" src="header-component.ts"></script>
+        <script type="module" src="meal-card.ts"></script>
+        <script type="module" src="search-bar.ts"></script>
     </head>
     <body>
         <article>
-            <header class="Website-Header">
-                <svg class="icon">
-                    <use href="/icons/icons.svg#logo" />
-                </svg>
-                <h1>Meal Maker</h1>
-            </header>
+            <header-component></header-component>
             <section class="Page-Content">
                 <header class="Indian-Header">
                     <h1>Indian Cuisine - Meal Options</h1>
@@ -27,64 +27,26 @@
                         options
                     </b>
                 </header>
-                <section class="Search-Container">
-                    <input class="Search-Bar" type="search" placeholder="Search" />
-                </section>
                 <section class="Meal-Selection">
                     <h2 class="Selection-Title">Please Select a Meal:</h2>
+                    <search-bar></search-bar>
                     <ul>
-                        <li>
-                            <a href="butterchicken.html">
-                                <img src="/images/Butter-Chicken.jpg" width="200" />
-                                <hr width="100%" color="black" />
-                                Butter Chicken</a
-                            >
-                        </li>
-                        <li>
-                            <a href="biryani.html">
-                                <img src="/images/biryani.jpg" width="200" />
-                                <hr width="100%" color="black" />
-                                Biryani</a
-                            >
-                        </li>
-                        <li>
-                            <a href="dalmaakhani.html">
-                                <img src="/images/dal.jpg" width="200" />
-                                <hr width="100%" color="black" />
-                                Dal Makhani</a
-                            >
-                        </li>
-                        <li>
-                            <a href="samosa.html">
-                                <img src="/images/samosa.jpg" width="200" />
-                                <hr width="100%" color="black" />
-                                Samosa</a
-                            >
-                        </li>
-                        <li>
-                            <a href="tandoorichicken.html">
-                                <img
-                                    src="/images/tandoori-chicken.jpg"
-                                    width="200"
-                                />
-                                <hr width="100%" color="black" />
-                                Tandoori Chicken
-                            </a>
-                        </li>
-                        <li>
-                            <a href="paneertikka.html"
-                                ><img src="/images/paneer-tikka.jpg" width="200" />
-                                <hr width="100%" color="black" />
-                                Paneer Tikka</a
-                            >
-                        </li>
-                        <li>
-                            <a href="dosai.html"
-                                ><img src="/images/dosai.jpg" width="200" />
-                                <hr width="100%" color="black" />
-                                Dosai</a
-                            >
-                        </li>
+                        <meal-card
+                            htmlFile="butterchicken.html"
+                            src="/images/Butter-Chicken.jpg"
+                        >
+                            Butter Chicken
+                        </meal-card>
+                        <meal-card src="/images/biryani.jpg">Biryani</meal-card>
+                        <meal-card src="/images/dal.jpg">Dal Makhani</meal-card>
+                        <meal-card src="/images/samosa.jpg">Samosa</meal-card>
+                        <meal-card src="/images/tandoori-chicken.jpg"
+                            >Tandoori Chicken</meal-card
+                        >
+                        <meal-card src="/images/paneer-tikka.jpg"
+                            >Paneer Tikka</meal-card
+                        >
+                        <meal-card src="/images/dosai.jpg">Dosai</meal-card>
                     </ul>
                 </section>
             </section>

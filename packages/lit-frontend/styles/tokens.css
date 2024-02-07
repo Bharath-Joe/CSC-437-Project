@@ -4,10 +4,29 @@
     --color-background: #EEA47F;
     --color-border: black;
     --color-invert: #00539C;
+    --color-whole-background: white;
+    --color-hover: #c98e70;
 
     --size-spacing-small: 0.5rem;
     --size-spacing-medium: 1rem;
     --size-spacing-medium2: 1.5rem;
     --size-spacing-large: 2rem;
-    --size-spacing-extralarge: 3rem
+    --size-spacing-extralarge: 3rem;
+
+    --font-family-header: 'Merriweather', serif, Calibri, Roboto, "Segoe UI", Ubuntu, sans-serif;
+;
+
+    --time-transition-control: 300ms;
+        
+}
+
+body.darkMode {
+    --color-text: white;
+    --color-text-heading: #EEA47F;
+    --color-background: #00539C;
+    --color-border: white;
+    --color-invert: #EEA47F;
+    --color-whole-background: #121212;
+    --color-hover: #003665;
+
 }

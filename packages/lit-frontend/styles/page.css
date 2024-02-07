@@ -1,6 +1,7 @@
 body {
     font-family: 'Ubuntu', sans-serif, 'Times New Roman', Times, serif;
     ;
+    background-color: var(--color-whole-background);
 }
 
 h1,
@@ -8,15 +9,15 @@ h2,
 h3,
 h4,
 h5,
-h6 {
-    font-family: 'Merriweather', serif, Calibri,
-        Roboto, "Segoe UI",
-        Ubuntu, sans-serif;
-    ;
+h6 { font-family: var(--font-family-header);
 }
 
 .Page-Content {
     padding: 50px;
+}
+
+hr {
+    color: var(--color-text)
 }
 
 /* Index.js CSS */
@@ -24,11 +25,39 @@ h6 {
     font-size: 19px;
     display: flex;
     align-items: center;
-    padding: 10px 0px 10px 50px;
+    padding: 15px 50px 15px 50px;
     color: var(--color-text-heading);
     border-bottom: 2px solid var(--color-text-heading);
+    justify-content: space-between;
+}
+
+.Website-Header section {
+    display: flex;
     gap: 0.5rem;
 }
+
+.User-Drop-Down {
+    align-items: center;
+}
+
+drop-down li {
+    display: flex;
+    font-size: var(--size-spacing-medium);
+    margin: 15px;
+    align-items: center;
+    gap: 10px;
+}
+
+.user {
+    border: 1px solid;
+    border-radius: 50%;
+    padding: 3px;
+    height: 2em;
+    width: 2em;
+    vertical-align: top;
+    fill: currentColor;
+}
+
 
 .Cuisine-Selection {
     padding-top: 5%;
@@ -66,7 +95,7 @@ h6 {
 }
 
 .Cuisine-Selection ul li a:hover {
-    background-color: #d2855f;
+    background-color: var(--color-hover);
 }
 
 .food-container {
@@ -78,7 +107,7 @@ h6 {
 .food {
     display: flex;
     justify-content: baseline;
-    animation: scroll 10s linear infinite; /* Double the duration to match the duplication */
+    animation: scroll 10s linear infinite;
 }
 
 .food img {
@@ -87,18 +116,20 @@ h6 {
 
 @keyframes scroll {
     0% {
-      transform: translateX(-100%);
+        transform: translateX(-100%);
     }
+
     100% {
-      transform: translateX(0);
+        transform: translateX(0);
     }
-  }
+}
 
 /* Indian.js CSS */
 
 .Meal-Options {
     padding: 50px;
 }
+
 
 .Indian-Header h1 {
     font-size: var(--size-spacing-large);
@@ -109,22 +140,24 @@ h6 {
     color: var(--color-text-heading);
 }
 
+
 .Search-Bar {
     display: flex;
     font-size: 17px;
     align-items: center;
-    border: 2px solid var(--color-invert);
-    border-radius: 10px;
+    border: 2px solid var(--color-border);
+    border-radius: 50px;
     padding: 5px 10px 5px 10px;
-    margin-top: var(--size-spacing-large);
+    margin-top: var(--size-spacing-medium);
     background-color: transparent;
-    color: black;
+    font-weight: bold;
+    color: var(--color-text);
 }
 
 
 .Selection-Title {
     color: var(--color-text-heading);
-    margin-top: var(--size-spacing-medium);
+    margin-top: var(--size-spacing-extralarge);
 }
 
 .Meal-Selection ul {
@@ -139,26 +172,7 @@ h6 {
     background-color: var(--color-background);
     width: 100%;
     justify-content: space-between;
-}
-
-.Meal-Selection ul li {
-    border: 2px solid var(--color-border);
-    border-radius: 10px;
-    padding: 15px;
-}
-
-.Meal-Selection ul li:hover {
-    background-color: #d29170;
-}
-
-.Meal-Selection ul li a {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--size-spacing-medium);
     color: var(--color-text);
-    text-decoration: none;
-    font-weight: bold;
 }
 
 /* Butter Chicken CSS */
@@ -208,6 +222,8 @@ h6 {
     justify-content: center;
     padding: 15px;
     border-radius: 15px;
+    color: var(--color-text);
+
 }
 
 .Utensiles-Ingredients h4 {
@@ -232,6 +248,7 @@ h6 {
 }
 
 .Steps {
+    color: var(--color-text);
     display: flex;
     flex-direction: column;
     gap: var(--size-spacing-small);
