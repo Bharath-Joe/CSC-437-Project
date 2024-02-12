@@ -216,13 +216,10 @@ drop-down li {
 
 .Utensiles-Ingredients {
     margin-bottom: var(--size-spacing-medium);
-    background-color: var(--color-background);
     display: flex;
-    gap: var(--size-spacing-extralarge);
-    justify-content: center;
-    padding: 15px;
-    border-radius: 15px;
+    justify-content: space-between;
     color: var(--color-text);
+    gap: var(--size-spacing-medium);
 
 }
 
@@ -236,6 +233,10 @@ drop-down li {
 
 .Utensiles,
 .Ingredients {
+    /* width: 50vw; */
+    background-color: var(--color-background);
+    border-radius: 15px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
     gap: var(--size-spacing-small);
@@ -271,4 +272,17 @@ svg.icon {
     width: 1.5em;
     vertical-align: top;
     fill: currentColor;
+}
+
+.profile-content {
+    padding: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.profile-content h1 {
+    color: var(--color-invert);
+    font-size: var(--size-spacing-large);
+    padding-bottom: var(--size-spacing-medium);
 }

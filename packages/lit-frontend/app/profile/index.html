@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/styles/page.css" />
+        <link rel="stylesheet" href="/styles/reset.css" />
+        <link rel="stylesheet" href="/styles/tokens.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Merriweather&family=Ubuntu&display=swap"
+            rel="stylesheet"
+        />
+        <script type="module" src="../../src/drop-down.ts"></script>
+        <script type="module" src="../../src/toggle-switch.ts"></script>
+        <script type="module" src="../../src/header-component.ts"></script>
+        <script type="module" src="../../src/user-profile.ts"></script>
+    </head>
+    <body>
+        <header-component></header-component>
+        <section class="profile-content">
+            <section class="profile-view">
+                <h1>My Profile</h1>
+                <user-profile path="/profile/bharath1121"></user-profile>
+            </section>
+            <section class="profile-edit">
+                <h1>Edit Profile</h1>
+                <user-profile-edit
+                    path="/profile/bharath1121"
+                ></user-profile-edit>
+            </section>
+        </section>
+    </body>
+</html>
