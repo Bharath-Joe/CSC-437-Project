@@ -1,3 +1,2 @@
-/node_modules
-/packages/express-backend/.env
-/packages/lit-frontend/node_modules
+node_modules
+.env
