@@ -1,7 +1,6 @@
 :root {
-    --color-text: black;
-    --color-text-heading: #00539C;
-    --color-background: #EEA47F;
+    --color-text: white;
+    --color-background: #2da164;
     --color-border: black;
     --color-invert: #00539C;
     --color-whole-background: white;
@@ -13,9 +12,10 @@
     --size-spacing-large: 2rem;
     --size-spacing-extralarge: 3rem;
 
-    --font-family-header: 'Merriweather', serif, Calibri, Roboto, "Segoe UI", Ubuntu, sans-serif;
-;
+    --font-family-body: "Recursive", sans-serif, 'Times New Roman', Times, serif;
+    --font-family-header: "Fjalla One", "Barriecito", sans-serif, Calibri, Roboto, "Segoe UI";
 
+;
     --time-transition-control: 300ms;
         
 }

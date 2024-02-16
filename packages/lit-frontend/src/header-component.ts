@@ -4,48 +4,24 @@ import { customElement } from "lit/decorators.js";
 @customElement("header-component")
 class HeaderElement extends LitElement {
     render() {
-        return html` <header class="Website-Header">
-            <section>
-                <svg class="icon">
-                    <use href="/icons/icons.svg#logo" />
-                </svg>
-                <h1>Meal Maker</h1>
+        return html` <header class="Website-Side-Header">
+            <section class="Website-Title">
+                <h1>MealMaker</h1>
             </section>
-            <drop-down>
-                <section class="User-Drop-Down">
-                    <svg class="user">
-                        <use href="/icons/icons.svg#batman" />
-                    </svg>
-                    <p>Hello, Bharath</p>
-                </section>
-                <ul slot="menu">
-                    <li><toggle-switch id="toggle">Lights</toggle-switch></li>
-                    <li href="profile/index.html">
-                        <svg class="icon">
-                            <use href="/icons/icons.svg#user" />
-                        </svg>
-                        My Profile
-                    </li>
-                    <li>
-                        <svg class="icon">
-                            <use href="/icons/icons.svg#edit-user" />
-                        </svg>
-                        Edit Profile
-                    </li>
-                    <li>
-                        <svg class="icon">
-                            <use href="/icons/icons.svg#help" />
-                        </svg>
-                        Help
-                    </li>
-                    <li>
-                        <svg class="icon">
-                            <use href="/icons/icons.svg#logout" />
-                        </svg>
-                        Logout
-                    </li>
+            <section class="Side-Header-Contents">
+                <ul>
+                    <li>Recipies</li>
+                    <li>Favorites</li>
+                    <li>Filters</li>
+                    <li>Create</li>
                 </ul>
-            </drop-down>
+            </section>
+            <section>
+                <ul>
+                    <li>Settings</li>
+                    <li>Log Out</li>
+                </ul>
+            </section>
         </header>`;
     }
 
@@ -57,51 +33,20 @@ class HeaderElement extends LitElement {
 
         h1 {
             font-family: var(--font-family-header);
+            font-size: 
         }
 
-        .Website-Header {
-            font-size: 19px;
+        .Website-Side-Header {
+            padding: 40px 50px 40px 50px;
             display: flex;
-            align-items: center;
-            padding: 15px 50px 15px 50px;
-            color: var(--color-text-heading);
-            border-bottom: 2px solid var(--color-text-heading);
+            color: white;
+            // border: 1px solid black;
+            border-radius: 0px 30px 0px 0px;
+            background-color: var(--color-background);
+            width: fit-content;
+            height: 100vh;
+            flex-direction: column;
             justify-content: space-between;
-        }
-
-        .Website-Header section {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .User-Drop-Down {
-            align-items: center;
-        }
-
-        drop-down li {
-            display: flex;
-            font-size: var(--size-spacing-medium);
-            margin: 15px;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .user {
-            border: 1px solid;
-            border-radius: 50%;
-            padding: 3px;
-            height: 2em;
-            width: 2em;
-            vertical-align: top;
-            fill: currentColor;
-        }
-
-        svg.icon {
-            display: inline;
-            height: 1.5em;
-            width: 1.5em;
-            vertical-align: top;
-            fill: currentColor;
         }
     `;
 }
