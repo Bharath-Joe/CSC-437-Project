@@ -1,25 +1,23 @@
 :root {
     --color-text: white;
     --color-background: #2da164;
+    --color-text-invert: #2da164;
+    --color-body-text: black;
+    --color-background-invert: white;
     --color-border: black;
-    --color-invert: #00539C;
-    --color-whole-background: white;
-    --color-hover: #c98e70;
 
-    --size-spacing-small: 0.5rem;
-    --size-spacing-medium: 1rem;
-    --size-spacing-medium2: 1.5rem;
+    --size-spacing-extra-small: 0.5rem;
+    --size-spacing-small: 1rem;
+    --size-spacing-medium: 1.25rem;
     --size-spacing-large: 2rem;
     --size-spacing-extralarge: 3rem;
 
     --font-family-body: "Recursive", sans-serif, 'Times New Roman', Times, serif;
     --font-family-header: "Fjalla One", "Barriecito", sans-serif, Calibri, Roboto, "Segoe UI";
-
-;
-    --time-transition-control: 300ms;
         
 }
 
+/* 
 body.darkMode {
     --color-text: white;
     --color-text-heading: #EEA47F;
@@ -29,4 +27,4 @@ body.darkMode {
     --color-whole-background: #121212;
     --color-hover: #003665;
 
-}
+} */

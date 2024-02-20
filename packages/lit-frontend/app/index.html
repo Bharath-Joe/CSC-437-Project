@@ -11,9 +11,43 @@
             rel="stylesheet"
         />
         <script type="module" src="../src/header-component.ts"></script>
+        <script type="module" src="../src/meal-card.ts"></script>
     </head>
     <body id="Home">
         <header-component></header-component>
-        <span>Hello, Bharath!</span>
+        <section class="body-content">
+            <section class="name-refresh">
+                <p>Hello, Bharath! What are we cooking today?</p>
+                <svg class="icon">
+                    <use href="/icons/icons.svg#refresh" />
+                </svg>
+            </section>
+            <label class="sort">
+                Sort by:
+                <section class="sort-options">
+                    <span id="Random">Random</span>
+                    <span id="A-Z">Ascending order</span>
+                    <span id="Z-A">Descending order</span>
+                    <span id="Price">Price-low to high</span>
+                </section>
+            </label>
+            <ul>
+                <meal-card src="../images/Spaghetti-Bolognese.webp">Spaghetti Bolognese</meal-card>
+                <meal-card src="../images/sushi.jpg">Sushi Roll Combo</meal-card>
+                <meal-card src="../images/beef-and-broccoli-stir-fry-14.webp">Beef and Broccoli Stir-Fry</meal-card>
+                <meal-card>Margherita Pizza</meal-card>
+                <meal-card>Shrimp Pad Thai</meal-card>
+                <meal-card>Chicken Tikka Masala</meal-card>
+                <meal-card>Vegetarian Enchiladas</meal-card>
+                <meal-card>Salmon Teriyaki Bowl</meal-card>
+                <meal-card>Caprese Salad</meal-card>
+                <meal-card>Butter Chicken</meal-card>
+                <meal-card>Greek Souvlaki with Tzatziki</meal-card>
+                <meal-card>Black Bean and Corn Quesadillas</meal-card>
+                <meal-card>Vegetable Curry with Basmati Rice</meal-card>
+                <meal-card>Beef Tacos with Fresh Salsa</meal-card>
+                <meal-card>Salmon and Quinoa Stuffed Peppers</meal-card>
+            </ul>
+        </section>
     </body>
 </html>
