@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit";
+import {html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Route, Router } from "@vaadin/router";
 

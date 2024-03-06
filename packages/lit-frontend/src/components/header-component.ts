@@ -3,13 +3,39 @@ import { customElement, property } from "lit/decorators.js";
 import resetCSS from "../styles/reset.css?inline";
 import pageCSS from "../styles/page.css?inline";
 
+interface PathToPageMap {
+    [key: string]: string;
+}
+
 @customElement("header-component")
 class HeaderElement extends LitElement {
     @property()
     currentPage = "dashboard";
 
-    handleNavigation(page: string) {
-        this.currentPage = page;
+    connectedCallback() {
+        super.connectedCallback();
+        // Listen for navigation changes and update the active page
+        window.addEventListener("popstate", () => {
+            this.updateCurrentPage();
+        });
+        // Initial update
+        this.updateCurrentPage();
+    }
+
+    updateCurrentPage() {
+        // Get the current path from the URL
+        const currentPath = window.location.pathname;
+
+        // Map the path to a page name (assuming your paths correspond to page names)
+        const pathToPage: PathToPageMap = {
+            "/": "dashboard",
+            "/favorites": "favorites",
+            "/filters": "filters",
+            "/create": "create",
+            "/settings": "settings",
+        };
+
+        this.currentPage = pathToPage[currentPath] || "dashboard";
     }
 
     render() {
@@ -22,28 +48,48 @@ class HeaderElement extends LitElement {
             <section class="Side-Header-Contents">
                 <ul>
                     <li>
-                        <a href="/">
+                        <a
+                            href="/"
+                            class="${this.currentPage === "dashboard"
+                                ? "active"
+                                : ""}"
+                        >
                             <svg class="icon">
                                 <use href="/icons/icons.svg#dashboard" /></svg
                             >Dashboard
                         </a>
                     </li>
                     <li>
-                        <a href="favorites">
+                        <a
+                            href="/favorites"
+                            class="${this.currentPage === "favorites"
+                                ? "active"
+                                : ""}"
+                        >
                             <svg class="icon">
                                 <use href="/icons/icons.svg#favorite" /></svg
                             >Favorites
                         </a>
                     </li>
                     <li>
-                        <a href="filters">
+                        <a
+                            href="/filters"
+                            class="${this.currentPage === "filters"
+                                ? "active"
+                                : ""}"
+                        >
                             <svg class="icon">
                                 <use href="/icons/icons.svg#filter" /></svg
                             >Filters
                         </a>
                     </li>
                     <li>
-                        <a href="create">
+                        <a
+                            href="/create"
+                            class="${this.currentPage === "create"
+                                ? "active"
+                                : ""}"
+                        >
                             <svg class="icon">
                                 <use href="/icons/icons.svg#create" /></svg
                             >Create
@@ -54,7 +100,12 @@ class HeaderElement extends LitElement {
             <section>
                 <ul>
                     <li>
-                        <a href="settings">
+                        <a
+                            href="/settings"
+                            class="${this.currentPage === "settings"
+                                ? "active"
+                                : ""}"
+                        >
                             <svg class="icon">
                                 <use href="/icons/icons.svg#settings" /></svg
                             >Settings
@@ -128,7 +179,7 @@ class HeaderElement extends LitElement {
             }
 
             img {
-                border-radius: 50%;
+                border-radius: 10px;
                 width: 100px;
                 height: 100px;
                 object-fit: cover;

@@ -1,85 +1,111 @@
 import { css, html, unsafeCSS } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import * as App from "../app";
 import "../components/header-component";
 import "../components/meal-card";
 import resetCSS from "../styles/reset.css?inline";
 import pageCSS from "../styles/page.css?inline";
+import { Recipe } from "ts-models";
 
 @customElement("dashboard-page")
 class DashboardPageElement extends App.View {
-    //Need to pull data from database
-    mealData = [
+    @property({ type: Array })
+    mealData: Recipe[] = [];
+
+    connectedCallback() {
+        super.connectedCallback();
+        this.fetchAndSetRecipes();
+    }
+
+    fetchAndSetRecipes() {
+        fetch(`http://localhost:3000/recipes`)
+            .then((response) => response.json())
+            .then((data) => {
+                if (data && data.length > 0) {
+                    let sortedData = data.sort(() => Math.random() - 0.5);
+                    let selectedData = sortedData.slice(0, 9);
+                    switch (this.selectedSortID) {
+                        case "A-Z":
+                            this.mealData = selectedData.sort(
+                                (a: { name: string }, b: { name: any }) =>
+                                    a.name.localeCompare(b.name)
+                            );
+                            break;
+                        case "Z-A":
+                            this.mealData = selectedData.sort(
+                                (a: { name: any }, b: { name: string }) =>
+                                    b.name.localeCompare(a.name)
+                            );
+                            break;
+                        case "Random":
+                            this.mealData = selectedData;
+                            break;
+                        default:
+                            break;
+                    }
+                    this.requestUpdate();
+                }
+            })
+            .catch((error) => console.error("Error fetching recipes:", error));
+    }
+
+    handleRefreshClick() {
+        this.fetchAndSetRecipes();
+    }
+
+    sortOptions = [
         {
-            name: "Spaghetti Bolognese",
-            src: "../images/Spaghetti-Bolognese.webp",
+            name: "Random Order",
+            id: "Random",
         },
-        { name: "Sushi Roll Combo", src: "../images/sushi.jpg" },
         {
-            name: "Beef and Broccoli Stir-Fry",
-            src: "../images/beef-and-broccoli-stir-fry-14.webp",
-        },
-        { name: "Margherita Pizza", src: "../images/margherita-pizza.jpg" },
-        { name: "Shrimp Pad Thai", src: "../images/shrimp-pad-thai.jpg" },
-        {
-            name: "Chicken Tikka Masala",
-            src: "../images/chicken-tikka-masala.jpg",
+            name: "Ascending order",
+            id: "A-Z",
         },
         {
-            name: "Vegetarian Enchiladas",
-            src: "../images/vegetarian-enchiladas.jpg",
-        },
-        {
-            name: "Salmon Teriyaki Bowl",
-            src: "../images/salmon-teriyaki-bowl.jpg",
-        },
-        { name: "Caprese Salad", src: "../images/caprese-salad.jpg" },
-        { name: "Butter Chicken", src: "../images/butter-chicken.jpg" },
-        {
-            name: "Greek Souvlaki with Tzatziki",
-            src: "../images/greek-souvlaki.jpg",
-        },
-        {
-            name: "Black Bean and Corn Quesadillas",
-            src: "../images/black-bean-and-corn-quesadillas.jpg",
-        },
-        {
-            name: "Vegetable Curry with Basmati Rice",
-            src: "../images/vegetable-curry.jpg",
-        },
-        {
-            name: "Beef Tacos with Fresh Salsa",
-            src: "../images/beef-tacos.jpg",
-        },
-        {
-            name: "Salmon and Quinoa Stuffed Peppers",
-            src: "../images/salmon-and-quinoa-stuffed-peppers.jpg",
+            name: "Descending order",
+            id: "Z-A",
         },
     ];
 
+    selectedSortID: string = "Random";
+    handleSortSelect(sortID: string) {
+        this.selectedSortID = sortID;
+        this.fetchAndSetRecipes();
+    }
     render() {
         return html`
             <section class="body-content">
                 <section class="name-refresh">
                     <p>Hello, Bharath! What are we cooking today?</p>
-                    <svg class="icon">
+                    <svg class="icon" @click=${() => this.handleRefreshClick()}>
                         <use href="/icons/icons.svg#refresh" />
                     </svg>
                 </section>
                 <label class="sort">
                     Sort by:
                     <section class="sort-options">
-                        <span id="Random">Random order</span>
-                        <span id="A-Z">Ascending order</span>
-                        <span id="Z-A">Descending order</span>
+                        ${this.sortOptions.map(
+                            (sort) =>
+                                html`<span
+                                    id=${sort.id}
+                                    class=${sort.id === this.selectedSortID
+                                        ? "selected"
+                                        : ""}
+                                    @click=${() =>
+                                        this.handleSortSelect(sort.id)}
+                                    >${sort.name}</span
+                                >`
+                        )}
                     </section>
                 </label>
                 <ul>
                     ${this.mealData.map(
                         (meal) =>
-                            html`<meal-card src="${meal.src}"
-                                >${meal.name}</meal-card
-                            >`
+                            html`<meal-card
+                                src=${meal.src}
+                                name=${meal.name}
+                            ></meal-card>`
                     )}
                 </ul>
             </section>
@@ -102,6 +128,7 @@ class DashboardPageElement extends App.View {
                 vertical-align: top;
                 fill: currentColor;
                 stroke: currentColor;
+                cursor: pointer;
             }
 
             .name-refresh {
@@ -123,24 +150,32 @@ class DashboardPageElement extends App.View {
             #Random {
                 padding: 10px;
                 border-right: 2px solid var(--color-border);
+            }
+
+            #Random.selected {
                 color: var(--color-text);
                 border-radius: 8px 0 0 8px;
                 background-color: var(--color-background);
-                color: var(--color-text);
             }
 
             #A-Z {
                 padding: 10px;
                 border-right: 2px solid var(--color-border);
-                /* background-color: var(--color-background);
-            color: var(--color-text); */
+            }
+
+            #A-Z.selected {
+                background-color: var(--color-background);
+                color: var(--color-text);
             }
 
             #Z-A {
                 padding: 10px;
-                /* color: var(--color-text);
-            border-radius: 0 8px 8px 0;
-            background-color: var(--color-background); */
+            }
+
+            #Z-A.selected {
+                color: var(--color-text);
+                border-radius: 0 8px 8px 0;
+                background-color: var(--color-background);
             }
 
             .body-content ul {

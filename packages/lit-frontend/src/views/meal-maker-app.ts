@@ -32,6 +32,12 @@ class MealMakerElement extends App.Main {
             :host {
                 display: contents;
             }
+
+            vaadin-router {
+                display: flex;
+                width: 100%;
+                justify-content: center;
+            }
         `,
     ];
 }

@@ -5,6 +5,10 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
 var __copyProps = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
     for (let key of __getOwnPropNames(from))
@@ -21,29 +25,27 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
-var import_express = __toESM(require("express"));
-var import_cors = __toESM(require("cors"));
-var import_mongoConnect = require("./mongoConnect");
-var import_recipies = __toESM(require("./services/recipies"));
-const app = (0, import_express.default)();
-const port = process.env.PORT || 3e3;
-app.use((0, import_cors.default)());
-app.use(import_express.default.json());
-(0, import_mongoConnect.connect)("meal-maker");
-app.get("/hello", (req, res) => {
-  res.send("Hello, World");
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var recipies_exports = {};
+__export(recipies_exports, {
+  default: () => recipies_default
 });
-app.get("/recipes", (req, res) => {
-  import_recipies.default.index().then((recipes) => res.json(recipes)).catch((err) => res.status(404).end());
-});
-app.get("/recipes/:name", (req, res) => {
-  const { name } = req.params;
-  import_recipies.default.get(name).then((recipe) => res.json(recipe)).catch((err) => res.status(404).end());
-});
-app.post("/recipes", (req, res) => {
-  const newRecipe = req.body;
-  import_recipies.default.create(newRecipe).then((recipe) => res.status(201).send(recipe)).catch((err) => res.status(500).send(err));
-});
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+module.exports = __toCommonJS(recipies_exports);
+var import_recipe = __toESM(require("../mongo/recipe"));
+function index() {
+  return import_recipe.default.find();
+}
+function get(name) {
+  return import_recipe.default.find({ name }).then((list) => list[0]).catch((err) => {
+    throw `${name} Not Found`;
+  });
+}
+function create(recipe) {
+  const r = new import_recipe.default(recipe);
+  return r.save();
+}
+var recipies_default = {
+  index,
+  get,
+  create
+};

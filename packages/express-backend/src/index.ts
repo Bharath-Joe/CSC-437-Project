@@ -2,8 +2,8 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import { connect } from "./mongoConnect";
-import profiles from "./profiles";
-import { Profile } from "./models/profile";
+import recipies from "./services/recipies";
+import { Recipe } from "ts-models";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -16,30 +16,27 @@ app.get("/hello", (req: Request, res: Response) => {
     res.send("Hello, World");
 });
 
-app.get("/api/profile/:userid", (req: Request, res: Response) => {
-    const { userid } = req.params;
-    profiles
-        .get(userid)
-        .then((profile: Profile) => res.json(profile))
+app.get("/recipes", (req: Request, res: Response) => {
+    recipies
+        .index()
+        .then((recipes: Recipe[]) => res.json(recipes))
         .catch((err) => res.status(404).end());
 });
 
-app.post("/api/profiles", (req: Request, res: Response) => {
-    const newProfile = req.body;
-    profiles
-        .create(newProfile)
-        .then((profile: Profile) => res.status(201).send(profile))
+app.get("/recipes/:name", (req: Request, res: Response) => {
+    const { name } = req.params;
+    recipies
+        .get(name)
+        .then((recipe: Recipe) => res.json(recipe))
+        .catch((err) => res.status(404).end());
+});
+
+app.post("/recipes", (req: Request, res: Response) => {
+    const newRecipe = req.body;
+    recipies
+        .create(newRecipe)
+        .then((recipe: Recipe) => res.status(201).send(recipe))
         .catch((err) => res.status(500).send(err));
-});
-
-app.put("/api/profile/:userid", (req: Request, res: Response) => {
-    const { userid } = req.params;
-    const newProfile = req.body;
-
-    profiles
-        .update(userid, newProfile)
-        .then((profile: Profile) => res.json(profile))
-        .catch((err) => res.status(404).end());
 });
 
 app.listen(port, () => {

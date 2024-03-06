@@ -9,75 +9,80 @@ import pageCSS from "../styles/page.css?inline";
 @customElement("meal-page")
 class MealPageElement extends App.View {
     @property({ type: String })
-    meal_name: string = "Spaghetti Bolognese";
+    name: string = window.location.pathname.replace("/app/", "");
 
     @property({ type: String })
-    meal_description: string = `Spaghetti Bolognese is a hearty and 
-    flavorful Italian pasta dish featuring a rich meat sauce served over 
-    cooked spaghetti. This traditional recipe combines ground meat, tomatoes, 
-    vegetables, and aromatic herbs to create a satisfying and comforting meal.`;
+    description: string = "";
+
+    @property({ type: String })
+    cuisine: string = "";
+
+    @property({ type: String })
+    cost: string = "";
+
+    @property({ type: String })
+    src: string = "";
+
+    @property({ type: Number })
+    time: number = NaN;
 
     @property({ type: Array })
-    ingredients: string[] = [
-        "1 lb (450g) ground beef or a mix of beef and pork",
-        "1 onion, finely chopped",
-        "2 carrots, diced",
-        "2 celery stalks, diced",
-        "3 cloves garlic, minced",
-        "1 can (28 oz) crushed tomatoes",
-        "1 cup beef or vegetable broth",
-        "1/2 cup red wine (optional)",
-        "2 tablespoons tomato paste",
-        "2 teaspoons dried oregano",
-        "1 teaspoon dried basil",
-        "1 teaspoon dried thyme",
-        "Salt and pepper to taste",
-        "Olive oil",
-        "1 lb (450g) spaghetti",
-        "Grated Parmesan cheese for serving (optional)",
-    ];
+    ingredients: string[] = [];
 
     @property({ type: Array })
-    utensils: string[] = [
-        "Large pot or Dutch oven",
-        "Spoon (for stirring)",
-        "Chopping board",
-        "Knife",
-        "Measuring cups and spoons",
-        "Can opener",
-        "Grater (Parmesan cheese, optional)",
-        "Cooking spoon or spatula",
-        "Colander (for draining spaghetti)",
-        "Optional: Wine opener (if using red wine)",
-        "Optional: Cheese grater (Parmesan, if desired)"
-    ];
+    utensils: string[] = [];
 
     @property({ type: Array })
-    steps: string[] = [
-        "Heat a large pot or Dutch oven over medium heat. Add a splash of olive oil, and sauté the chopped onions, carrots, and celery until softened.",
-        "Add the minced garlic and cook for an additional minute until fragrant.",
-        "Increase the heat to medium-high and add the ground meat. Break it apart with a spoon and cook until browned.",
-        "Stir in the tomato paste and cook for 2-3 minutes to enhance its flavor.",
-        "Pour in the red wine (if using) and let it simmer for a few minutes, allowing the alcohol to cook off.",
-        "Add the crushed tomatoes, beef broth, dried oregano, basil, thyme, salt, and pepper. Bring the mixture to a boil, then reduce the heat and let it simmer uncovered for at least 30 minutes to allow the flavors to meld. Stir occasionally.",
-        "While the sauce is simmering, cook the spaghetti according to the package instructions. Drain and set aside.",
-        "Taste the Bolognese sauce and adjust the seasoning if needed. If the sauce is too thick, you can add a bit more broth.",
-        "Serve the Bolognese sauce over the cooked spaghetti. Garnish with grated Parmesan cheese if desired.",
-    ];
+    steps: string[] = [];
+
+    costMapping: Record<number, string> = {
+        0: "Low",
+        1: "Low to Moderate",
+        2: "Moderate",
+        3: "Moderate to High",
+        4: "High",
+    };
+
+    connectedCallback() {
+        super.connectedCallback();
+        console.log(window.location.pathname);
+        fetch(`http://localhost:3000/recipes/${this.name}`)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                this.name = data.name;
+                this.description = data.description;
+                this.ingredients = data.ingredients;
+                this.utensils = data.utensils;
+                this.steps = data.steps;
+                this.cuisine = data.cuisine;
+                this.cost = this.costMapping[data.cost] || "Unknown";
+                this.time = data.time;
+                this.src = data.src;
+                this.requestUpdate();
+            })
+            .catch((error) => console.error("Error fetching recipe:", error));
+    }
 
     render() {
         return html`
             <section class="body-content">
                 <section class="meal-header">
-                    <h1>${this.meal_name}</h1>
+                    <h1>${this.name} - <span>${this.cuisine}</span></h1>
                     <svg class="icon">
-                        <use href="/icons/icons.svg#add" />
+                        <use href="/icons/icons.svg#favorite" />
                     </svg>
                 </section>
-                <p class="meal-description">${this.meal_description}</p>
+                <p class="meal-description">
+                    <b>Description: </b>${this.description}
+                </p>
+                <p class="meal-description"><b>Cost: </b>${this.cost}</p>
+                <p class="meal-description">
+                    <b>Preperation Time: </b>${this.time} minutes
+                </p>
                 <section class="meal-body">
                     <section class="image-ingredients">
-                        <img src="../images/Spaghetti-Bolognese.webp" />
+                        <img src=${this.src} />
                         <section class="ingredients">
                             <h2>Ingredients:</h2>
                             <ul>
