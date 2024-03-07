@@ -18,27 +18,37 @@ class DashboardPageElement extends App.View {
     }
 
     fetchAndSetRecipes() {
-        fetch(`http://localhost:3000/recipes`)
+        const savedFiltersJSON = localStorage.getItem("savedFilters");
+        const savedFilters = savedFiltersJSON
+            ? JSON.parse(savedFiltersJSON)
+            : {};
+
+        // Include saved filters in the request URL
+        const queryString = Object.keys(savedFilters)
+            .map((key) => `${key}=${encodeURIComponent(savedFilters[key])}`)
+            .join("&");
+
+        const url = `http://localhost:3000/recipes?${queryString}`;
+        fetch(url)
             .then((response) => response.json())
             .then((data) => {
                 if (data && data.length > 0) {
                     let sortedData = data.sort(() => Math.random() - 0.5);
-                    let selectedData = sortedData.slice(0, 9);
                     switch (this.selectedSortID) {
                         case "A-Z":
-                            this.mealData = selectedData.sort(
+                            this.mealData = sortedData.sort(
                                 (a: { name: string }, b: { name: any }) =>
                                     a.name.localeCompare(b.name)
                             );
                             break;
                         case "Z-A":
-                            this.mealData = selectedData.sort(
+                            this.mealData = sortedData.sort(
                                 (a: { name: any }, b: { name: string }) =>
                                     b.name.localeCompare(a.name)
                             );
                             break;
                         case "Random":
-                            this.mealData = selectedData;
+                            this.mealData = sortedData;
                             break;
                         default:
                             break;

@@ -1,4 +1,4 @@
-import { css, html, unsafeCSS } from "lit";
+import { PropertyValueMap, css, html, unsafeCSS } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import * as App from "../app";
 import "../components/header-component";
@@ -8,8 +8,11 @@ import pageCSS from "../styles/page.css?inline";
 
 @customElement("meal-page")
 class MealPageElement extends App.View {
+    @property({ attribute: false })
+    location?: Location;
+
     @property({ type: String })
-    name: string = window.location.pathname.replace("/app/", "");
+    name?: string = this.location?.pathname.replace("/app/", "");
 
     @property({ type: String })
     description: string = "";
@@ -43,25 +46,30 @@ class MealPageElement extends App.View {
         4: "High",
     };
 
-    connectedCallback() {
-        super.connectedCallback();
-        console.log(window.location.pathname);
-        fetch(`http://localhost:3000/recipes/${this.name}`)
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                this.name = data.name;
-                this.description = data.description;
-                this.ingredients = data.ingredients;
-                this.utensils = data.utensils;
-                this.steps = data.steps;
-                this.cuisine = data.cuisine;
-                this.cost = this.costMapping[data.cost] || "Unknown";
-                this.time = data.time;
-                this.src = data.src;
-                this.requestUpdate();
-            })
-            .catch((error) => console.error("Error fetching recipe:", error));
+    protected updated(
+        _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+    ): void {
+        if (_changedProperties.has("location")) {
+            const name = this.location?.pathname.replace("/app/", "");
+            fetch(`http://localhost:3000/recipes/${name}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                    this.name = data.name;
+                    this.description = data.description;
+                    this.ingredients = data.ingredients;
+                    this.utensils = data.utensils;
+                    this.steps = data.steps;
+                    this.cuisine = data.cuisine;
+                    this.cost = this.costMapping[data.cost] || "Unknown";
+                    this.time = data.time;
+                    this.src = data.src;
+                    this.requestUpdate();
+                })
+                .catch((error) =>
+                    console.error("Error fetching recipe:", error)
+                );
+        }
     }
 
     render() {

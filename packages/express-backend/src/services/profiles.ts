@@ -1,4 +1,3 @@
-// src/profiles.ts
 import { Document } from "mongoose";
 import { Profile } from "ts-models";
 import ProfileModel from "../mongo/profile";

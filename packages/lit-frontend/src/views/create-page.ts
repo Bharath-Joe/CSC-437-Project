@@ -89,7 +89,9 @@ class CreatePageElement extends App.View {
         this.requestUpdate();
     }
 
-    handleCreate() {
+    handleCreate(event: Event) {
+        const target = event.target as HTMLInputElement;
+        const form = target.closest("form") as HTMLFormElement;
         const newRecipe = {
             name: this.name,
             description: this.description,
@@ -130,6 +132,7 @@ class CreatePageElement extends App.View {
                 this.link = "";
                 this.requestUpdate();
                 alert("Recipe successfully created!");
+                form.reset();
             })
             .catch((error) => {
                 console.error("Error creating recipe:", error);
@@ -138,7 +141,7 @@ class CreatePageElement extends App.View {
 
     render() {
         return html`
-            <section class="body-content">
+            <form class="body-content">
                 <section class="create-item">
                     <label for="name">Recipe Name:</label>
                     <input
@@ -264,10 +267,10 @@ class CreatePageElement extends App.View {
                             this.handleLinkChange(event)}
                     />
                 </section>
-                <section class="button" @click=${() => this.handleCreate()}>
+                <section class="button" @click=${(event: Event) => this.handleCreate(event)}>
                     <button>Create</button>
                 </section>
-            </section>
+            </form>
         `;
     }
 

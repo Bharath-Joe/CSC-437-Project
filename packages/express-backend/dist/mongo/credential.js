@@ -16,21 +16,25 @@ var __copyProps = (to, from, except, desc) => {
   return to;
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var profile_exports = {};
-__export(profile_exports, {
-  default: () => profile_default
+var credential_exports = {};
+__export(credential_exports, {
+  default: () => credential_default
 });
-module.exports = __toCommonJS(profile_exports);
+module.exports = __toCommonJS(credential_exports);
 var import_mongoose = require("mongoose");
-const profileSchema = new import_mongoose.Schema(
+const credentialSchema = new import_mongoose.Schema(
   {
-    name: { type: String, required: true, trim: true },
-    nickname: { type: String, trim: true },
-    preferredCuisine: { type: String, required: true, trim: true },
-    favoriteMeal: { type: String, trim: true },
-    cookingSkill: { type: Number, trim: true }
+    username: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    hashedPassword: {
+      type: String,
+      required: true
+    }
   },
-  { collection: "user_profiles" }
+  { collection: "user_credentials" }
 );
-const ProfileModel = (0, import_mongoose.model)("Profile", profileSchema);
-var profile_default = ProfileModel;
+const credentialModel = (0, import_mongoose.model)("Credential ", credentialSchema);
+var credential_default = credentialModel;

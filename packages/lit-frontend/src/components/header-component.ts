@@ -2,6 +2,9 @@ import { css, html, LitElement, unsafeCSS } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import resetCSS from "../styles/reset.css?inline";
 import pageCSS from "../styles/page.css?inline";
+import { consume } from "@lit/context";
+import { authContext } from "../views/login-page";
+import { APIUser } from "../rest";
 
 interface PathToPageMap {
     [key: string]: string;
@@ -9,24 +12,24 @@ interface PathToPageMap {
 
 @customElement("header-component")
 class HeaderElement extends LitElement {
+    @consume({ context: authContext, subscribe: true })
+    @property({ attribute: false })
+    user = new APIUser();
+
     @property()
     currentPage = "dashboard";
 
     connectedCallback() {
         super.connectedCallback();
-        // Listen for navigation changes and update the active page
         window.addEventListener("popstate", () => {
             this.updateCurrentPage();
         });
-        // Initial update
         this.updateCurrentPage();
     }
 
     updateCurrentPage() {
-        // Get the current path from the URL
         const currentPath = window.location.pathname;
 
-        // Map the path to a page name (assuming your paths correspond to page names)
         const pathToPage: PathToPageMap = {
             "/": "dashboard",
             "/favorites": "favorites",
@@ -36,6 +39,14 @@ class HeaderElement extends LitElement {
         };
 
         this.currentPage = pathToPage[currentPath] || "dashboard";
+    }
+
+    logOut() {
+        console.log("log out")
+        console.log(this.user)
+        this.user.signOut();
+        console.log(this.user)
+        console.log("Signout");
     }
 
     render() {
@@ -111,10 +122,12 @@ class HeaderElement extends LitElement {
                             >Settings
                         </a>
                     </li>
-                    <li class="logout">
-                        <svg class="icon">
-                            <use href="/icons/icons.svg#logout" /></svg
-                        >Log Out
+                    <li class="logout" @click=${this.logOut}>
+                        <a href="/login">
+                            <svg class="icon">
+                                <use href="/icons/icons.svg#logout" /></svg
+                            >Log Out
+                        </a>
                     </li>
                 </ul>
             </section>
@@ -170,6 +183,10 @@ class HeaderElement extends LitElement {
                 gap: var(--size-spacing-small);
                 font-size: var(--size-spacing-small);
                 padding: 8px 8px 8px 8px;
+            }
+
+            .logout {
+                padding: 0;
             }
 
             li a.active {

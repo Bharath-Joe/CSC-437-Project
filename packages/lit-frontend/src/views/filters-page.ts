@@ -57,6 +57,7 @@ class FlitersPageElement extends App.View {
     selectedPrice: number = 2;
     selectedMinTime: number = 0;
     selectedMaxTime: number = 0;
+    defaultTextArea: string = "";
 
     handleCuisineClick(cuisine: string) {
         const index = this.selectedCuisines.indexOf(cuisine);
@@ -114,9 +115,11 @@ class FlitersPageElement extends App.View {
             "Selected Min Time: " + this.selectedMinTime + "\n",
             "Selected Max Time: " + this.selectedMaxTime
         );
+        this.saveFiltersToLocalStorage();
     }
 
     handleClearAll() {
+        localStorage.removeItem("savedFilters");
         this.selectedType = "";
         this.selectedCuisines = [];
         this.excludedIngredients = [];
@@ -124,6 +127,34 @@ class FlitersPageElement extends App.View {
         this.selectedMinTime = 0;
         this.selectedMaxTime = 0;
         this.requestUpdate();
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
+        const savedFilters = localStorage.getItem("savedFilters");
+        if (savedFilters) {
+            const parsedFilters = JSON.parse(savedFilters);
+            if (parsedFilters.excludedIngredients) {
+                const excludedIngredientsString =
+                    parsedFilters.excludedIngredients.join("\n");
+                this.defaultTextArea = excludedIngredientsString;
+            }
+
+            Object.assign(this, parsedFilters);
+            this.requestUpdate();
+        }
+    }
+
+    saveFiltersToLocalStorage() {
+        const filtersToSave = {
+            selectedType: this.selectedType,
+            selectedCuisines: this.selectedCuisines,
+            excludedIngredients: this.excludedIngredients,
+            selectedPrice: this.selectedPrice,
+            selectedMinTime: this.selectedMinTime,
+            selectedMaxTime: this.selectedMaxTime,
+        };
+        localStorage.setItem("savedFilters", JSON.stringify(filtersToSave));
     }
 
     render() {
@@ -179,11 +210,13 @@ class FlitersPageElement extends App.View {
                     <section class="filter">
                         <b>Excluded Ingredients</b>
                         <textarea
+                            id="ingredients"
                             rows="4"
                             placeholder="Enter each excluded ingredient on a new line."
                             @input=${(event: InputEvent) =>
                                 this.handleExcludedIngredientsChange(event)}
-                        ></textarea>
+                        >${this.defaultTextArea}
+                        </textarea>
                     </section>
                     <section class="filter">
                         <b>Price</b>

@@ -1,5 +1,5 @@
 import { css, html, unsafeCSS } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 // MVU app
 import * as App from "../app";
 import routes from "../routes";
@@ -7,6 +7,7 @@ import update from "../update";
 // Components
 import "../components/header-component";
 import "../components/vaadin-router";
+import "./login-page";
 import resetCSS from "../styles/reset.css?inline";
 import pageCSS from "../styles/page.css?inline";
 
@@ -16,11 +17,14 @@ class MealMakerElement extends App.Main {
         super(update);
     }
 
+    includeHeader = !["/login", "/register"].includes(window.location.pathname);
+    
     render() {
         return html`
             <section id="Body">
-                <header-component></header-component>
-                <vaadin-router .routes=${routes}> </vaadin-router>
+                ${this.includeHeader
+                    ? html`<header-component></header-component>`
+                    : ""} <vaadin-router .routes=${routes}> </vaadin-router>
             </section>
         `;
     }
