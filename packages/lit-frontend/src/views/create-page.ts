@@ -1,13 +1,19 @@
 import { css, html, unsafeCSS } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import * as App from "../app";
 import "../components/header-component";
-import "../components/meal-card";
 import resetCSS from "../styles/reset.css?inline";
 import pageCSS from "../styles/page.css?inline";
+import { APIUser, AuthenticatedUser } from "../rest";
+import { consume } from "@lit/context";
+import { authContext } from "./login-page";
 
 @customElement("create-page")
 class CreatePageElement extends App.View {
+    @consume({ context: authContext, subscribe: true })
+    @property({ attribute: false })
+    user = new APIUser();
+
     name: string = "";
     description: string = "";
     type: string = "";
@@ -105,10 +111,12 @@ class CreatePageElement extends App.View {
             src: this.link,
         };
 
+        var token = (this.user as AuthenticatedUser).token;
         fetch("http://localhost:3000/recipes", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(newRecipe),
         })
@@ -130,9 +138,8 @@ class CreatePageElement extends App.View {
                 this.utensils = [];
                 this.steps = [];
                 this.link = "";
-                this.requestUpdate();
                 alert("Recipe successfully created!");
-                form.reset();
+                this.requestUpdate();
             })
             .catch((error) => {
                 console.error("Error creating recipe:", error);
@@ -267,7 +274,10 @@ class CreatePageElement extends App.View {
                             this.handleLinkChange(event)}
                     />
                 </section>
-                <section class="button" @click=${(event: Event) => this.handleCreate(event)}>
+                <section
+                    class="button"
+                    @click=${(event: Event) => this.handleCreate(event)}
+                >
                     <button>Create</button>
                 </section>
             </form>

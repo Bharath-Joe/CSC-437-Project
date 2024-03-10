@@ -1,5 +1,5 @@
 import { Document } from "mongoose";
-import { Profile } from "ts-models";
+import { Profile, Recipe } from "ts-models";
 import ProfileModel from "../mongo/profile";
 
 function index(): Promise<Profile[]> {
@@ -30,4 +30,38 @@ function update(userid: String, profile: Profile): Promise<Profile> {
     });
 }
 
-export default { index, get, create, update };
+function addFavorite(userid: string, recipe: Recipe): Promise<Profile> {
+    return new Promise((resolve, reject) => {
+        ProfileModel.findOneAndUpdate(
+            { userid },
+            { $addToSet: { favorites: recipe } },
+            {
+                new: true,
+            }
+        ).then((profile) => {
+            if (profile) resolve(profile);
+            else reject("Failed to update profile");
+        });
+    });
+}
+
+function removeFavorite(userid: string, recipe: Recipe): Promise<Profile> {
+    console.log(recipe._id);
+    return new Promise((resolve, reject) => {
+        ProfileModel.findOneAndUpdate(
+            { userid },
+            { $pull: { favorites: recipe._id } },
+            {
+                new: true,
+            }
+        ).then((profile) => {
+            if (profile) {
+                resolve(profile);
+            } else {
+                reject("Failed to update profile");
+            }
+        });
+    });
+}
+
+export default { index, get, create, update, addFavorite, removeFavorite };

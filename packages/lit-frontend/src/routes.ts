@@ -4,8 +4,6 @@ import "./views/meal-page";
 import "./views/create-page";
 import "./views/filters-page";
 import "./views/settings-page";
-import "./views/login-page";
-import "./views/register-page";
 
 export default [
     {
@@ -22,7 +20,5 @@ export default [
     { path: "/filters", component: "filters-page" },
     { path: "/settings", component: "settings-page" },
     { path: "/favorites", component: "favorites-page" },
-    { path: "/login", component: "login-page" },
-    { path: "/register", component: "register-page" },
     { path: "(.*)", redirect: "/app" },
 ];

@@ -19,12 +19,22 @@ class HeaderElement extends LitElement {
     @property()
     currentPage = "dashboard";
 
+    @property({ type: String })
+    name: string = "";
+
     connectedCallback() {
         super.connectedCallback();
         window.addEventListener("popstate", () => {
             this.updateCurrentPage();
         });
         this.updateCurrentPage();
+        fetch(`http://localhost:3000/profiles/${this.user.username}`)
+            .then((response) => response.json())
+            .then((data) => {
+                this.name = data.name;
+                this.requestUpdate();
+            })
+            .catch((error) => console.error("Error fetching profile:", error));
     }
 
     updateCurrentPage() {
@@ -42,11 +52,7 @@ class HeaderElement extends LitElement {
     }
 
     logOut() {
-        console.log("log out")
-        console.log(this.user)
         this.user.signOut();
-        console.log(this.user)
-        console.log("Signout");
     }
 
     render() {
@@ -54,7 +60,7 @@ class HeaderElement extends LitElement {
             <section class="Website-Title">
                 <h1>MealMaker</h1>
                 <img src="../images/headshot.jpg" />
-                <p>Bharath Senthilkumar</p>
+                <p>${this.name}</p>
             </section>
             <section class="Side-Header-Contents">
                 <ul>

@@ -6,15 +6,39 @@ import "../components/meal-card";
 import resetCSS from "../styles/reset.css?inline";
 import pageCSS from "../styles/page.css?inline";
 import { Recipe } from "ts-models";
+import { consume } from "@lit/context";
+import { authContext } from "./login-page";
+import { APIUser, AuthenticatedUser } from "../rest";
 
 @customElement("dashboard-page")
 class DashboardPageElement extends App.View {
     @property({ type: Array })
     mealData: Recipe[] = [];
 
+    @property({ type: Array })
+    favorites: string[] = [];
+
+    @consume({ context: authContext, subscribe: true })
+    @property({ attribute: false })
+    user = new APIUser();
+
+    @property({ type: String })
+    name: string = "";
     connectedCallback() {
         super.connectedCallback();
         this.fetchAndSetRecipes();
+        this.fetchProfile();
+    }
+
+    fetchProfile() {
+        fetch(`http://localhost:3000/profiles/${this.user.username}`)
+            .then((response) => response.json())
+            .then((data) => {
+                this.name = data.name;
+                this.favorites = data.favorites;
+                this.requestUpdate();
+            })
+            .catch((error) => console.error("Error fetching profile:", error));
     }
 
     fetchAndSetRecipes() {
@@ -29,7 +53,14 @@ class DashboardPageElement extends App.View {
             .join("&");
 
         const url = `http://localhost:3000/recipes?${queryString}`;
-        fetch(url)
+        var token = (this.user as AuthenticatedUser).token;
+
+        fetch(url, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        })
             .then((response) => response.json())
             .then((data) => {
                 if (data && data.length > 0) {
@@ -83,11 +114,16 @@ class DashboardPageElement extends App.View {
         this.selectedSortID = sortID;
         this.fetchAndSetRecipes();
     }
+
+    isFavorite(recipe: Recipe): boolean {
+        return this.favorites.some((favorite) => favorite === recipe._id);
+    }
+
     render() {
         return html`
             <section class="body-content">
                 <section class="name-refresh">
-                    <p>Hello, Bharath! What are we cooking today?</p>
+                    <p>Hello, ${this.name}! What are we cooking today?</p>
                     <svg class="icon" @click=${() => this.handleRefreshClick()}>
                         <use href="/icons/icons.svg#refresh" />
                     </svg>
@@ -113,8 +149,10 @@ class DashboardPageElement extends App.View {
                     ${this.mealData.map(
                         (meal) =>
                             html`<meal-card
-                                src=${meal.src}
-                                name=${meal.name}
+                                favorited="${this.isFavorite(meal)
+                                    ? "favorite"
+                                    : "not"}"
+                                .recipe=${meal}
                             ></meal-card>`
                     )}
                 </ul>

@@ -3,9 +3,10 @@ import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import { connect } from "./mongoConnect";
 import recipies from "./services/recipies";
-import { Recipe, Credential } from "ts-models";
+import { Recipe, Credential, Profile } from "ts-models";
 import jwt from "jsonwebtoken";
 import credentials from "./services/credentials";
+import profiles from "./services/profiles";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -13,16 +14,6 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 connect("meal-maker");
-
-// const router = express.Router();
-// router.use(authenticateUser);
-
-// router.use("/app");
-// router.use("/app/:mealid");
-// router.use("/create");
-// router.use("/filters");
-// router.use("/settings");
-// router.use("/favorites");
 
 function generateAccessToken(username: string) {
     console.log("Generating token for", username);
@@ -57,7 +48,6 @@ function authenticateUser(req: Request, res: Response, next: NextFunction) {
     } else {
         jwt.verify(token, tokenSecret, (error: any, decoded: any) => {
             if (decoded) {
-                console.log("Decoded token", decoded);
                 next();
             } else {
                 res.status(401).end();
@@ -66,17 +56,30 @@ function authenticateUser(req: Request, res: Response, next: NextFunction) {
     }
 }
 
-app.post("/register", (req: Request, res: Response) => {
-    const { username, password } = req.body;
+app.post("/register", async (req: Request, res: Response) => {
+    console.log(req.body);
+    const { name, preferredCuisine, favoriteMeal, username, password } =
+        req.body;
+    var favorites: Recipe[] = [];
+    const newProfile = {
+        userid: username,
+        favorites: favorites,
+        name: name,
+        preferredCuisine: preferredCuisine,
+        favoriteMeal: favoriteMeal,
+    };
     if (!username || !password) {
         res.status(400).send("Bad request: Invalid input data.");
     } else {
-        credentials
-            .create(username, password)
-            .then((creds) => generateAccessToken(creds.username))
-            .then((token) => {
-                res.status(201).send({ token: token });
-            });
+        try {
+            const creds = await credentials.create(username, password);
+            const token = await generateAccessToken(creds.username);
+            res.status(201).send({ token: token });
+            await profiles.create(newProfile);
+        } catch (err) {
+            console.error(err);
+            res.status(500).send("Internal Server Error");
+        }
     }
 });
 
@@ -100,8 +103,6 @@ app.get("/hello", (req: Request, res: Response) => {
 
 function applyFilters(queryParams: any, recipes: Recipe[]): Recipe[] {
     let filteredRecipes = [...recipes];
-    console.log(queryParams);
-
     if (queryParams.selectedType) {
         filteredRecipes = filteredRecipes.filter(
             (recipe) => recipe.type === queryParams.selectedType
@@ -155,13 +156,47 @@ function applyFilters(queryParams: any, recipes: Recipe[]): Recipe[] {
     return filteredRecipes;
 }
 
-app.get("/recipes", (req: Request, res: Response) => {
+app.get("/recipes", authenticateUser, (req: Request, res: Response) => {
     recipies
         .index()
         .then((recipes: Recipe[]) => {
             const filteredRecipes = applyFilters(req.query, recipes);
             res.json(filteredRecipes);
         })
+        .catch((err) => res.status(404).end());
+});
+
+app.get("/profiles/:userid", (req: Request, res: Response) => {
+    const { userid } = req.params;
+    profiles
+        .get(userid)
+        .then((profile: Profile) => res.json(profile))
+        .catch((err) => res.status(404).end());
+});
+
+app.put("/profiles/favorites/:userid", (req: Request, res: Response) => {
+    const { userid } = req.params;
+    const newRecipe = req.body;
+    profiles
+        .addFavorite(userid, newRecipe)
+        .then((profile: Profile) => res.json(profile))
+        .catch((err) => res.status(404).end());
+});
+
+app.put("/profiles/favorites/remove/:userid", (req: Request, res: Response) => {
+    const { userid } = req.params;
+    const newRecipe = req.body;
+    profiles
+        .removeFavorite(userid, newRecipe)
+        .then((profile: Profile) => res.json(profile))
+        .catch((err) => res.status(404).end());
+});
+
+app.get("/recipes/id/:_id", (req: Request, res: Response) => {
+    const { _id } = req.params;
+    recipies
+        .getbyId(_id)
+        .then((recipe: Recipe) => res.json(recipe))
         .catch((err) => res.status(404).end());
 });
 
@@ -173,7 +208,8 @@ app.get("/recipes/:name", (req: Request, res: Response) => {
         .catch((err) => res.status(404).end());
 });
 
-app.post("/recipes", (req: Request, res: Response) => {
+
+app.post("/recipes", authenticateUser, (req: Request, res: Response) => {
     const newRecipe = req.body;
     recipies
         .create(newRecipe)

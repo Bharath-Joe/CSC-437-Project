@@ -6,8 +6,8 @@ var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
+  for (var name2 in all)
+    __defProp(target, name2, { get: all[name2], enumerable: true });
 };
 var __copyProps = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
@@ -35,8 +35,13 @@ var import_recipe = __toESM(require("../mongo/recipe"));
 function index() {
   return import_recipe.default.find();
 }
-function get(name) {
-  return import_recipe.default.find({ name }).then((list) => list[0]).catch((err) => {
+function get(name2) {
+  return import_recipe.default.find({ name: name2 }).then((list) => list[0]).catch((err) => {
+    throw `${name2} Not Found`;
+  });
+}
+function getbyId(_id) {
+  return import_recipe.default.find({ _id }).then((list) => list[0]).catch((err) => {
     throw `${name} Not Found`;
   });
 }
@@ -47,5 +52,6 @@ function create(recipe) {
 var recipies_default = {
   index,
   get,
+  getbyId,
   create
 };

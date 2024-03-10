@@ -1,30 +1,128 @@
-import { css, html, LitElement, unsafeCSS } from "lit";
+import { css, html, LitElement, render, unsafeCSS } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import resetCSS from "../styles/reset.css?inline";
 import pageCSS from "../styles/page.css?inline";
+import { consume } from "@lit/context";
+import { authContext } from "../views/login-page";
+import { APIUser, AuthenticatedUser } from "../rest";
+import { Recipe } from "ts-models";
 
 @customElement("meal-card")
 class MealElement extends LitElement {
     @property({ type: String })
-    src: string = "";
+    favorited: string = "";
 
-    @property({ type: String })
-    name: string = "";
+    @property({ type: Object })
+    recipe: Recipe = {
+        name: "",
+        cuisine: "",
+        description: "",
+        type: "",
+        ingredients: [],
+        utensils: [],
+        steps: [],
+        cost: 0,
+        time: 0,
+        src: "",
+    };
+
+    @consume({ context: authContext, subscribe: true })
+    @property({ attribute: false })
+    user = new APIUser();
+
+    // Handle the click event on the heart icon
+    private handleFavoriteClick(newRecipe: Recipe) {
+        console.log(newRecipe);
+        const newFavoritedState =
+            this.favorited === "favorite" ? "" : "favorite";
+        this.favorited = newFavoritedState;
+        if (newFavoritedState === "favorite") {
+            this.addToFavorites(newRecipe);
+        } else {
+            this.removeFromFavorites(newRecipe);
+        }
+    }
+
+    private removeFromFavorites(newRecipe: Recipe) {
+        var token = (this.user as AuthenticatedUser).token;
+        fetch(
+            `http://localhost:3000/profiles/favorites/remove/${this.user.username}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(newRecipe),
+            }
+        )
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to add to favorites");
+                }
+                return response.json();
+            })
+            .then((profile) => {
+                console.log("Added to favorites:", profile);
+            })
+            .catch((error) => {
+                console.error("Error adding to favorites:", error);
+            });
+    }
+
+    private addToFavorites(newRecipe: Recipe) {
+        var token = (this.user as AuthenticatedUser).token;
+        fetch(
+            `http://localhost:3000/profiles/favorites/${this.user.username}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(newRecipe),
+            }
+        )
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to add to favorites");
+                }
+                return response.json();
+            })
+            .then((profile) => {
+                console.log("Added to favorites:", profile);
+            })
+            .catch((error) => {
+                console.error("Error adding to favorites:", error);
+            });
+    }
 
     render() {
         return html`
             <li class="card">
-                <a class="card-contents" href="/app/${this.name}">
+                <section class="card-contents">
                     <section class="card-header">
-                        ${this.name}
-                        <svg class="icon">
-                            <use href="/icons/icons.svg#favorite" />
-                        </svg>
+                        ${this.recipe.name}
+                        ${this.favorited === "favorite"
+                            ? html`<svg
+                                  class="icon"
+                                  @click="${() =>
+                                      this.handleFavoriteClick(this.recipe)}"
+                              >
+                                  <use href="/icons/icons.svg#heart-filled" />
+                              </svg>`
+                            : html`<svg
+                                  class="icon"
+                                  @click="${() =>
+                                      this.handleFavoriteClick(this.recipe)}"
+                              >
+                                  <use href="/icons/icons.svg#heart-outline" />
+                              </svg>`}
                     </section>
-                    <section class="card-body">
-                        <img src=${this.src} />
-                    </section>
-                </a>
+                    <a class="card-body" href="/app/${this.recipe.name}">
+                        <img src=${this.recipe.src} />
+                    </a>
+                </section>
             </li>
         `;
     }

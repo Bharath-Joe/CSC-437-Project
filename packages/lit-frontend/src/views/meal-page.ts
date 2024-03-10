@@ -2,9 +2,12 @@ import { PropertyValueMap, css, html, unsafeCSS } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import * as App from "../app";
 import "../components/header-component";
-import "../components/meal-card";
 import resetCSS from "../styles/reset.css?inline";
 import pageCSS from "../styles/page.css?inline";
+import { Recipe } from "ts-models";
+import { APIUser, AuthenticatedUser } from "../rest";
+import { authContext } from "./login-page";
+import { consume } from "@lit/context";
 
 @customElement("meal-page")
 class MealPageElement extends App.View {
@@ -14,29 +17,22 @@ class MealPageElement extends App.View {
     @property({ type: String })
     name?: string = this.location?.pathname.replace("/app/", "");
 
-    @property({ type: String })
-    description: string = "";
-
-    @property({ type: String })
-    cuisine: string = "";
+    @property({ type: Object })
+    recipe: Recipe = {
+        name: "",
+        cuisine: "",
+        description: "",
+        type: "",
+        ingredients: [],
+        utensils: [],
+        steps: [],
+        cost: 0,
+        time: 0,
+        src: "",
+    };
 
     @property({ type: String })
     cost: string = "";
-
-    @property({ type: String })
-    src: string = "";
-
-    @property({ type: Number })
-    time: number = NaN;
-
-    @property({ type: Array })
-    ingredients: string[] = [];
-
-    @property({ type: Array })
-    utensils: string[] = [];
-
-    @property({ type: Array })
-    steps: string[] = [];
 
     costMapping: Record<number, string> = {
         0: "Low",
@@ -45,6 +41,13 @@ class MealPageElement extends App.View {
         3: "Moderate to High",
         4: "High",
     };
+
+    @property({ type: String })
+    favorited: string = "";
+
+    @consume({ context: authContext, subscribe: true })
+    @property({ attribute: false })
+    user = new APIUser();
 
     protected updated(
         _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
@@ -56,14 +59,14 @@ class MealPageElement extends App.View {
                 .then((data) => {
                     console.log(data);
                     this.name = data.name;
-                    this.description = data.description;
-                    this.ingredients = data.ingredients;
-                    this.utensils = data.utensils;
-                    this.steps = data.steps;
-                    this.cuisine = data.cuisine;
+                    this.recipe.description = data.description;
+                    this.recipe.ingredients = data.ingredients;
+                    this.recipe.utensils = data.utensils;
+                    this.recipe.steps = data.steps;
+                    this.recipe.cuisine = data.cuisine;
                     this.cost = this.costMapping[data.cost] || "Unknown";
-                    this.time = data.time;
-                    this.src = data.src;
+                    this.recipe.time = data.time;
+                    this.recipe.src = data.src;
                     this.requestUpdate();
                 })
                 .catch((error) =>
@@ -72,29 +75,95 @@ class MealPageElement extends App.View {
         }
     }
 
+    // private handleFavoriteClick(newRecipe: Recipe) {
+    //     console.log(newRecipe);
+    //     const newFavoritedState =
+    //         this.favorited === "favorite" ? "" : "favorite";
+    //     this.favorited = newFavoritedState;
+    //     if (newFavoritedState === "favorite") {
+    //         this.addToFavorites(newRecipe);
+    //     } else {
+    //         this.removeFromFavorites(newRecipe);
+    //     }
+    // }
+
+    // private removeFromFavorites(newRecipe: Recipe) {
+    //     var token = (this.user as AuthenticatedUser).token;
+    //     fetch(
+    //         `http://localhost:3000/profiles/favorites/remove/${this.user.username}`,
+    //         {
+    //             method: "PUT",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 Authorization: `Bearer ${token}`,
+    //             },
+    //             body: JSON.stringify(newRecipe),
+    //         }
+    //     )
+    //         .then((response) => {
+    //             if (!response.ok) {
+    //                 throw new Error("Failed to add to favorites");
+    //             }
+    //             return response.json();
+    //         })
+    //         .then((profile) => {
+    //             console.log("Added to favorites:", profile);
+    //         })
+    //         .catch((error) => {
+    //             console.error("Error adding to favorites:", error);
+    //         });
+    // }
+
+    // private addToFavorites(newRecipe: Recipe) {
+    //     var token = (this.user as AuthenticatedUser).token;
+    //     fetch(
+    //         `http://localhost:3000/profiles/favorites/${this.user.username}`,
+    //         {
+    //             method: "PUT",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 Authorization: `Bearer ${token}`,
+    //             },
+    //             body: JSON.stringify(newRecipe),
+    //         }
+    //     )
+    //         .then((response) => {
+    //             if (!response.ok) {
+    //                 throw new Error("Failed to add to favorites");
+    //             }
+    //             return response.json();
+    //         })
+    //         .then((profile) => {
+    //             console.log("Added to favorites:", profile);
+    //         })
+    //         .catch((error) => {
+    //             console.error("Error adding to favorites:", error);
+    //         });
+    // }
+
     render() {
         return html`
             <section class="body-content">
                 <section class="meal-header">
-                    <h1>${this.name} - <span>${this.cuisine}</span></h1>
+                    <h1>${this.name} - <span>${this.recipe.cuisine}</span></h1>
                     <svg class="icon">
-                        <use href="/icons/icons.svg#favorite" />
+                        <use href="/icons/icons.svg#heart-outline" />
                     </svg>
                 </section>
                 <p class="meal-description">
-                    <b>Description: </b>${this.description}
+                    <b>Description: </b>${this.recipe.description}
                 </p>
                 <p class="meal-description"><b>Cost: </b>${this.cost}</p>
                 <p class="meal-description">
-                    <b>Preperation Time: </b>${this.time} minutes
+                    <b>Preperation Time: </b>${this.recipe.time} minutes
                 </p>
                 <section class="meal-body">
                     <section class="image-ingredients">
-                        <img src=${this.src} />
+                        <img src=${this.recipe.src} />
                         <section class="ingredients">
                             <h2>Ingredients:</h2>
                             <ul>
-                                ${this.ingredients.map(
+                                ${this.recipe.ingredients.map(
                                     (ingredient) => html`<li>${ingredient}</li>`
                                 )}
                             </ul>
@@ -102,7 +171,7 @@ class MealPageElement extends App.View {
                         <section class="utensils">
                             <h2>Utensils:</h2>
                             <ul>
-                                ${this.utensils.map(
+                                ${this.recipe.utensils.map(
                                     (utensil) => html`<li>${utensil}</li>`
                                 )}
                             </ul>
@@ -111,7 +180,9 @@ class MealPageElement extends App.View {
                     <section class="steps">
                         <h2>Steps:</h2>
                         <ol>
-                            ${this.steps.map((step) => html`<li>${step}</li>`)}
+                            ${this.recipe.steps.map(
+                                (step) => html`<li>${step}</li>`
+                            )}
                         </ol>
                     </section>
                 </section>

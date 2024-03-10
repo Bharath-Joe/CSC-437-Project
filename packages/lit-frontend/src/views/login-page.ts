@@ -9,6 +9,38 @@ export let authContext = createContext<APIUser>("auth");
 
 @customElement("login-page")
 class LoginElement extends LitElement {
+    @state()
+    isLogin: boolean = true;
+
+    toggleLogin(isLogin: boolean) {
+        this.isLogin = isLogin;
+    }
+
+    @state()
+    registerStatus: number = 0;
+
+    handleSignUp(event: SubmitEvent) {
+        event.preventDefault();
+        const form = event.target as HTMLFormElement;
+        const data = new FormData(form);
+        const request = new FormDataRequest(data);
+
+        request
+            .base()
+            .post("/register")
+            .then((res) => {
+                if (res.status === 201) {
+                    return res.json();
+                } else {
+                    this.registerStatus = res.status;
+                }
+            })
+            .then((json) => {
+                console.log("Registration:", json);
+                window.location.href = "/app";
+            });
+    }
+
     @provide({ context: authContext })
     @state()
     user: APIUser = AuthenticatedUser.authenticateFromLocalStorage(() =>
@@ -55,15 +87,16 @@ class LoginElement extends LitElement {
                     this.user = authenticatedUser;
                     console.log(this.user);
                     this.toggleDialog(false);
-                    this.dispatchUserLoggedIn(authenticatedUser as AuthenticatedUser);
-                    // NEED TO ROUTE TO APP PAGE
-                    this.requestUpdate();
+                    this.dispatchUserLoggedIn(
+                        authenticatedUser as AuthenticatedUser
+                    );
                 }
             });
     }
 
     signOut() {
         this.user = APIUser.deauthenticate(this.user);
+        console.log("SIGN OUT", this.user);
         this.toggleDialog(!this.isAuthenticated());
         document.location.reload();
     }
@@ -96,29 +129,73 @@ class LoginElement extends LitElement {
     }
 
     render() {
+        const dialog = html`
+            ${this.isLogin
+                ? html`<section class="login-container">
+                      <form
+                          @submit=${this.handleLogin}
+                          @change=${() => (this.loginStatus = 0)}
+                      >
+                          <h1>Login</h1>
+                          <label
+                              ><span>Username:</span> <input name="username"
+                          /></label>
+                          <label
+                              ><span>Password:</span>
+                              <input name="password" type="password"
+                          /></label>
+                          <button type="submit">Login</button>
+                          <a href="#" @click=${() => this.toggleLogin(false)}
+                              >Don't have an account? Register</a
+                          >
+
+                          <p>
+                              ${this.loginStatus
+                                  ? `Login failed: ${this.loginStatus}`
+                                  : ""}
+                          </p>
+                      </form>
+                  </section>`
+                : html` <section class="login-container">
+                      <form
+                          @submit=${this.handleSignUp}
+                          @change=${(this.registerStatus = 0)}
+                      >
+                          <h1>Sign Up</h1>
+                          <label
+                              ><span>Full Name:</span> <input name="name"
+                          /></label>
+                          <label
+                              ><span>Preferred Cuisine:</span>
+                              <input name="preferredCuisine"
+                          /></label>
+                          <label
+                              ><span>Favorite Meal:</span>
+                              <input name="favoriteMeal"
+                          /></label>
+                          <label
+                              ><span>Create Username:</span>
+                              <input name="username"
+                          /></label>
+                          <label
+                              ><span>Create Password:</span>
+                              <input name="password" type="password"
+                          /></label>
+                          <button type="submit">Sign Up</button>
+                          <a href="#" @click=${() => this.toggleLogin(true)}
+                              >Already have an account? Login
+                          </a>
+                          <p>
+                              ${this.registerStatus
+                                  ? `Signup failed: ${this.registerStatus}`
+                                  : ""}
+                          </p>
+                      </form>
+                  </section>`}
+        `;
         return html`
-            <section class="login-container">
-                <form
-                    @submit=${this.handleLogin}
-                    @change=${() => (this.loginStatus = 0)}
-                >
-                    <h1>Login</h1>
-                    <label
-                        ><span>Username:</span> <input name="username"
-                    /></label>
-                    <label
-                        ><span>Password:</span>
-                        <input name="password" type="password"
-                    /></label>
-                    <button type="submit">Login</button>
-                    <a href="/register">Don't have an account? Register </a>
-                    <p>
-                        ${this.loginStatus
-                            ? `Login failed: ${this.loginStatus}`
-                            : ""}
-                    </p>
-                </form>
-            </section>
+            ${this.isAuthenticated() ? "" : dialog}
+            <slot></slot>
         `;
     }
 

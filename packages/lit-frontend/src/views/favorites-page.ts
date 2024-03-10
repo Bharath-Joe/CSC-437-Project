@@ -1,37 +1,65 @@
 import { css, html, unsafeCSS } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import * as App from "../app";
 import "../components/header-component";
 import "../components/meal-card";
 import resetCSS from "../styles/reset.css?inline";
 import pageCSS from "../styles/page.css?inline";
+import { consume } from "@lit/context";
+import { authContext } from "./login-page";
+import { APIUser } from "../rest";
+import { Recipe } from "ts-models";
 
 @customElement("favorites-page")
 class FavoritesPageElement extends App.View {
+    @consume({ context: authContext, subscribe: true })
+    @property({ attribute: false })
+    user = new APIUser();
+
+    @property({ type: Array })
+    favoriteRecipes: Recipe[] = [];
+
+    connectedCallback() {
+        super.connectedCallback();
+        this.fetchProfile();
+    }
+
+    fetchProfile() {
+        fetch(`http://localhost:3000/profiles/${this.user.username}`)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                this.fetchRecipeDetails(data.favorites); // Fetch details for each favorite recipe
+                this.requestUpdate();
+            })
+            .catch((error) => console.error("Error fetching profile:", error));
+    }
+
+    fetchRecipeDetails(favorites: string[]) {
+        favorites.forEach((favorite) => {
+            fetch(`http://localhost:3000/recipes/id/${favorite}`)
+                .then((response) => response.json())
+                .then((recipe) => {
+                    console.log(recipe);
+                    this.favoriteRecipes.push(recipe);
+                    this.requestUpdate();
+                })
+                .catch((error) =>
+                    console.error("Error fetching profile:", error)
+                );
+        });
+    }
     render() {
         return html`
             <section class="body-content">
                 <ul>
-                    <meal-card
-                        src="https://recipetineats.com/wp-content/uploads/2018/07/Spaghetti-Bolognese.jpg"
-                        name="Spaghetti Bolognese"
-                    ></meal-card>
-                    <meal-card
-                        src="https://recipetineats.com/wp-content/uploads/2018/07/Spaghetti-Bolognese.jpg"
-                        name="Spaghetti Bolognese"
-                    ></meal-card>
-                    <meal-card
-                        src="https://i.insider.com/601c27acee136f00183aa4f5?width=800&format=jpeg&auto=webp"
-                        name="Spaghetti Bolognese"
-                    ></meal-card>
-                    <meal-card
-                        src="https://cdn.apartmenttherapy.info/image/upload/f_jpg,q_auto:eco,c_fill,g_auto,w_1500,ar_4:3/k%2FPhoto%2FRecipe%20Ramp%20Up%2F2022-04-Pesto-Pizza%2Fpesto_pizza_4_of_4"
-                        name="Pesto Pizza"
-                    ></meal-card>
-                    <meal-card
-                    src=""
-                    name="Pesto Pizza"
-                ></meal-card>
+                    ${this.favoriteRecipes.map(
+                        (favorite) =>
+                            html`<meal-card
+                                favorited="favorite"
+                                .recipe=${favorite}
+                            ></meal-card>`
+                    )}
                 </ul>
             </section>
         `;

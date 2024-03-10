@@ -21,12 +21,33 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
+var __async = (__this, __arguments, generator) => {
+  return new Promise((resolve, reject) => {
+    var fulfilled = (value) => {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var rejected = (value) => {
+      try {
+        step(generator.throw(value));
+      } catch (e) {
+        reject(e);
+      }
+    };
+    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+    step((generator = generator.apply(__this, __arguments)).next());
+  });
+};
 var import_express = __toESM(require("express"));
 var import_cors = __toESM(require("cors"));
 var import_mongoConnect = require("./mongoConnect");
 var import_recipies = __toESM(require("./services/recipies"));
 var import_jsonwebtoken = __toESM(require("jsonwebtoken"));
 var import_credentials = __toESM(require("./services/credentials"));
+var import_profiles = __toESM(require("./services/profiles"));
 const app = (0, import_express.default)();
 const port = process.env.PORT || 3e3;
 app.use((0, import_cors.default)());
@@ -64,7 +85,6 @@ function authenticateUser(req, res, next) {
   } else {
     import_jsonwebtoken.default.verify(token, tokenSecret, (error, decoded) => {
       if (decoded) {
-        console.log("Decoded token", decoded);
         next();
       } else {
         res.status(401).end();
@@ -72,16 +92,31 @@ function authenticateUser(req, res, next) {
     });
   }
 }
-app.post("/register", (req, res) => {
-  const { username, password } = req.body;
+app.post("/register", (req, res) => __async(exports, null, function* () {
+  console.log(req.body);
+  const { name, preferredCuisine, favoriteMeal, username, password } = req.body;
+  var favorites = [];
+  const newProfile = {
+    userid: username,
+    favorites,
+    name,
+    preferredCuisine,
+    favoriteMeal
+  };
   if (!username || !password) {
     res.status(400).send("Bad request: Invalid input data.");
   } else {
-    import_credentials.default.create(username, password).then((creds) => generateAccessToken(creds.username)).then((token) => {
+    try {
+      const creds = yield import_credentials.default.create(username, password);
+      const token = yield generateAccessToken(creds.username);
       res.status(201).send({ token });
-    });
+      yield import_profiles.default.create(newProfile);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+    }
   }
-});
+}));
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
@@ -95,7 +130,6 @@ app.get("/hello", (req, res) => {
 });
 function applyFilters(queryParams, recipes) {
   let filteredRecipes = [...recipes];
-  console.log(queryParams);
   if (queryParams.selectedType) {
     filteredRecipes = filteredRecipes.filter(
       (recipe) => recipe.type === queryParams.selectedType
@@ -137,17 +171,35 @@ function applyFilters(queryParams, recipes) {
   }
   return filteredRecipes;
 }
-app.get("/recipes", (req, res) => {
+app.get("/recipes", authenticateUser, (req, res) => {
   import_recipies.default.index().then((recipes) => {
     const filteredRecipes = applyFilters(req.query, recipes);
     res.json(filteredRecipes);
   }).catch((err) => res.status(404).end());
 });
+app.get("/profiles/:userid", (req, res) => {
+  const { userid } = req.params;
+  import_profiles.default.get(userid).then((profile) => res.json(profile)).catch((err) => res.status(404).end());
+});
+app.put("/profiles/favorites/:userid", (req, res) => {
+  const { userid } = req.params;
+  const newRecipe = req.body;
+  import_profiles.default.addFavorite(userid, newRecipe).then((profile) => res.json(profile)).catch((err) => res.status(404).end());
+});
+app.put("/profiles/favorites/remove/:userid", (req, res) => {
+  const { userid } = req.params;
+  const newRecipe = req.body;
+  import_profiles.default.removeFavorite(userid, newRecipe).then((profile) => res.json(profile)).catch((err) => res.status(404).end());
+});
+app.get("/recipes/id/:_id", (req, res) => {
+  const { _id } = req.params;
+  import_recipies.default.getbyId(_id).then((recipe) => res.json(recipe)).catch((err) => res.status(404).end());
+});
 app.get("/recipes/:name", (req, res) => {
   const { name } = req.params;
   import_recipies.default.get(name).then((recipe) => res.json(recipe)).catch((err) => res.status(404).end());
 });
-app.post("/recipes", (req, res) => {
+app.post("/recipes", authenticateUser, (req, res) => {
   const newRecipe = req.body;
   import_recipies.default.create(newRecipe).then((recipe) => res.status(201).send(recipe)).catch((err) => res.status(500).send(err));
 });

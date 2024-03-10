@@ -56,4 +56,38 @@ function update(userid, profile) {
     });
   });
 }
-var profiles_default = { index, get, create, update };
+function addFavorite(userid, recipe) {
+  return new Promise((resolve, reject) => {
+    import_profile.default.findOneAndUpdate(
+      { userid },
+      { $addToSet: { favorites: recipe } },
+      {
+        new: true
+      }
+    ).then((profile) => {
+      if (profile)
+        resolve(profile);
+      else
+        reject("Failed to update profile");
+    });
+  });
+}
+function removeFavorite(userid, recipe) {
+  console.log(recipe._id);
+  return new Promise((resolve, reject) => {
+    import_profile.default.findOneAndUpdate(
+      { userid },
+      { $pull: { favorites: recipe._id } },
+      {
+        new: true
+      }
+    ).then((profile) => {
+      if (profile) {
+        resolve(profile);
+      } else {
+        reject("Failed to update profile");
+      }
+    });
+  });
+}
+var profiles_default = { index, get, create, update, addFavorite, removeFavorite };

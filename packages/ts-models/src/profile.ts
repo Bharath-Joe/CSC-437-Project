@@ -1,7 +1,9 @@
+import { Recipe } from ".";
+
 export interface Profile {
+    userid: string;
+    favorites: Array<Recipe>;
     name: string;
-    nickname?: string;
-    preferredCuisine: string;
+    preferredCuisine?: string;
     favoriteMeal?: string;
-    cookingSkill?: number;
 }
