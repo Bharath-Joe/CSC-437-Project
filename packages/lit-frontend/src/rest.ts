@@ -4,7 +4,7 @@ const TOKEN_KEY = "JWT_AUTH_TOKEN";
 
 export class APIUser {
     authenticated = false;
-    username = "fellow_traveler";
+    username = "";
     signOut = () => {};
 
     static _theUser = new APIUser();

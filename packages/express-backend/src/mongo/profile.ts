@@ -12,8 +12,8 @@ const profileSchema = new Schema<Profile>(
             },
         ],
         name: { type: String, required: true, trim: true },
-        preferredCuisine: { type: String, trim: true },
-        favoriteMeal: { type: String, trim: true },
+        preferredCuisine: { type: String, required: true, trim: true },
+        favoriteMeal: { type: String, required: true, trim: true },
     },
     { collection: "user_profiles" }
 );
