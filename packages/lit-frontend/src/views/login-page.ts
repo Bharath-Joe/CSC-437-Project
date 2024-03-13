@@ -195,7 +195,7 @@ class LoginElement extends LitElement {
         `;
         return html`
             ${this.isAuthenticated() ? "" : dialog}
-            <slot></slot>
+            ${this.isAuthenticated() ? html`<slot></slot>` : []}
         `;
     }
 

@@ -1,4 +1,4 @@
-import { css, html, unsafeCSS } from "lit";
+import { PropertyValueMap, css, html, unsafeCSS } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import * as App from "../app";
 import "../components/header-component";
@@ -31,6 +31,12 @@ class SettingsPageElement extends App.View {
         super.connectedCallback();
         this.fetchProfile();
     }
+
+    // protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    //     if(_changedProperties.has("user")) {
+    //         this.fetchProfile();
+    //     }
+    // }
 
     fetchProfile() {
         fetch(`http://localhost:3000/profiles/${this.user.username}`)
@@ -88,6 +94,7 @@ class SettingsPageElement extends App.View {
                             </svg>
                         </section>
                     </section>
+                    <toggle-switch id="toggle">Theme</toggle-switch>
                 </section>
             </section>
         `;
@@ -97,6 +104,9 @@ class SettingsPageElement extends App.View {
         unsafeCSS(resetCSS),
         unsafeCSS(pageCSS),
         css`
+            #toggle {
+                margin-top: var(--size-spacing-large);
+            }
             .icon {
                 color: var(--color-background);
                 fill: none;
@@ -105,6 +115,7 @@ class SettingsPageElement extends App.View {
             .body-content {
                 width: 100%;
                 padding: 40px;
+                color: var(--color-body-text);
             }
 
             .profile-header {

@@ -1,4 +1,4 @@
-import { css, html, unsafeCSS } from "lit";
+import { PropertyValueMap, css, html, unsafeCSS } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import * as App from "../app";
 import "../components/header-component";
@@ -24,6 +24,14 @@ class DashboardPageElement extends App.View {
 
     @property({ type: String })
     name: string = "";
+
+    // protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    //     if(_changedProperties.has("user")) {
+    //         this.fetchAndSetRecipes();
+    //         this.fetchProfile();
+    //     }
+    // }
+
     connectedCallback() {
         super.connectedCallback();
         this.fetchAndSetRecipes();
@@ -47,7 +55,6 @@ class DashboardPageElement extends App.View {
             ? JSON.parse(savedFiltersJSON)
             : {};
 
-        // Include saved filters in the request URL
         const queryString = Object.keys(savedFilters)
             .map((key) => `${key}=${encodeURIComponent(savedFilters[key])}`)
             .join("&");
@@ -167,6 +174,7 @@ class DashboardPageElement extends App.View {
             .body-content {
                 width: 100%;
                 padding: 40px;
+                color: var(--color-body-text);
             }
 
             svg.icon {

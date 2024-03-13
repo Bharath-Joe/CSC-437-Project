@@ -1,4 +1,4 @@
-import { css, html, LitElement, unsafeCSS } from "lit";
+import { css, html, LitElement, PropertyValueMap, unsafeCSS } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import resetCSS from "../styles/reset.css?inline";
 import pageCSS from "../styles/page.css?inline";
@@ -22,12 +22,11 @@ class HeaderElement extends LitElement {
     @property({ type: String })
     name: string = "";
 
-    connectedCallback() {
-        super.connectedCallback();
-        window.addEventListener("popstate", () => {
-            this.updateCurrentPage();
-        });
-        this.updateCurrentPage();
+    // protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    //     this.fetchProfile()
+    // }
+
+    fetchProfile() {
         fetch(`http://localhost:3000/profiles/${this.user.username}`)
             .then((response) => response.json())
             .then((data) => {
@@ -35,6 +34,15 @@ class HeaderElement extends LitElement {
                 this.requestUpdate();
             })
             .catch((error) => console.error("Error fetching profile:", error));
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
+        window.addEventListener("popstate", () => {
+            this.updateCurrentPage();
+        });
+        this.updateCurrentPage();
+        this.fetchProfile()
     }
 
     updateCurrentPage() {

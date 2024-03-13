@@ -5,6 +5,7 @@
     --color-body-text: black;
     --color-background-invert: white;
     --color-border: black;
+    --color-full-background: white;
 
     --size-spacing-extra-small: 0.5rem;
     --size-spacing-small: 1rem;
@@ -17,14 +18,13 @@
         
 }
 
-/* 
-body.darkMode {
-    --color-text: white;
-    --color-text-heading: #EEA47F;
-    --color-background: #00539C;
-    --color-border: white;
-    --color-invert: #EEA47F;
-    --color-whole-background: #121212;
-    --color-hover: #003665;
 
-} */
+body.darkMode {
+    --color-full-background: #121212;
+    --color-text: black;
+    --color-body-text: white;
+    --color-border: white;
+    --color-invert: #2da164;
+    --color-background-invert: #121212;
+
+}

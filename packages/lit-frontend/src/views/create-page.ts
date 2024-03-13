@@ -313,6 +313,7 @@ class CreatePageElement extends App.View {
                 flex-direction: column;
                 padding: 40px;
                 gap: var(--size-spacing-medium);
+                color: var(--color-body-text);
             }
 
             .create-item span {

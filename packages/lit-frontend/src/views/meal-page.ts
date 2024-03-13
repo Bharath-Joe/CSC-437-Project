@@ -140,6 +140,7 @@ class MealPageElement extends App.View {
             .body-content {
                 width: 100%;
                 padding: 40px;
+                color: var(--color-body-text);
             }
 
             .meal-header {

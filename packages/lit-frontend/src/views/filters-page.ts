@@ -236,7 +236,7 @@ class FlitersPageElement extends App.View {
                         <b>Preperation Time</b>
                         <section class="content">
                             <section class="option">
-                                <p>Min Time</p>
+                                <p>Minimum Time</p>
                                 <span
                                     ><input
                                         type="number"
@@ -247,7 +247,7 @@ class FlitersPageElement extends App.View {
                                 >
                             </section>
                             <section class="option">
-                                <p>Max Time</p>
+                                <p>Maximum Time</p>
                                 <span
                                     ><input
                                         type="number"
@@ -278,10 +278,17 @@ class FlitersPageElement extends App.View {
             .body-content {
                 width: 100%;
                 padding: 40px;
+                color: var(--color-body-text);
             }
 
             input[type="range"] {
                 width: 25vw;
+            }
+
+            input[type="number"] {
+                border-radius: 7px;
+                padding: 10px;
+                border: 1px solid var(--color-border);
             }
 
             input {
@@ -333,8 +340,6 @@ class FlitersPageElement extends App.View {
             .option {
                 display: flex;
                 padding: var(--size-spacing-extra-small);
-                border: 1px solid var(--color-border);
-                border-radius: 10px;
                 flex-direction: column;
                 gap: var(--size-spacing-extra-small);
             }
@@ -342,6 +347,7 @@ class FlitersPageElement extends App.View {
             .option span {
                 display: flex;
                 gap: var(--size-spacing-extra-small);
+                align-items: center;
             }
 
             .type-option span {
@@ -383,7 +389,7 @@ class FlitersPageElement extends App.View {
             .price-option {
                 padding: 10px;
                 border: 1px solid var(--color-border);
-                border-radius: 50px;
+                border-radius: 10px;
                 cursor: pointer;
             }
 

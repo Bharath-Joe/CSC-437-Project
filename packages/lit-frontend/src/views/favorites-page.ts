@@ -1,4 +1,4 @@
-import { css, html, unsafeCSS } from "lit";
+import { PropertyValueMap, css, html, unsafeCSS } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import * as App from "../app";
 import "../components/header-component";
@@ -23,6 +23,12 @@ class FavoritesPageElement extends App.View {
         super.connectedCallback();
         this.fetchProfile();
     }
+
+    // protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    //     if(_changedProperties.has("user")) {
+    //         this.fetchProfile();
+    //     }
+    // }
 
     fetchProfile() {
         fetch(`http://localhost:3000/profiles/${this.user.username}`)

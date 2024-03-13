@@ -12,6 +12,7 @@ h6 { font-family: var(--font-family-header);
 
 #Body {
     display: flex;
+    background-color: var(--color-full-background);
 }
 
 svg.icon {
