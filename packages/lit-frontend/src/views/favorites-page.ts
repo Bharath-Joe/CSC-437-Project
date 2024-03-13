@@ -21,14 +21,14 @@ class FavoritesPageElement extends App.View {
 
     connectedCallback() {
         super.connectedCallback();
-        this.fetchProfile();
+        // this.fetchProfile();
     }
 
-    // protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-    //     if(_changedProperties.has("user")) {
-    //         this.fetchProfile();
-    //     }
-    // }
+    protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+        if(_changedProperties.has("user")) {
+            this.fetchProfile();
+        }
+    }
 
     fetchProfile() {
         fetch(`http://localhost:3000/profiles/${this.user.username}`)

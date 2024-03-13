@@ -25,17 +25,17 @@ class DashboardPageElement extends App.View {
     @property({ type: String })
     name: string = "";
 
-    // protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-    //     if(_changedProperties.has("user")) {
-    //         this.fetchAndSetRecipes();
-    //         this.fetchProfile();
-    //     }
-    // }
+    protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+        if(_changedProperties.has("user")) {
+            this.fetchAndSetRecipes();
+            this.fetchProfile();
+        }
+    }
 
     connectedCallback() {
         super.connectedCallback();
-        this.fetchAndSetRecipes();
-        this.fetchProfile();
+        // this.fetchAndSetRecipes();
+        // this.fetchProfile();
     }
 
     fetchProfile() {
